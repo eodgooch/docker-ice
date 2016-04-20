@@ -6,6 +6,7 @@ ENV HOME_DIR /root
 ENV GRAILS_VERSION 2.4.4
 ENV GRAILS_HOME ${HOME_DIR}/.grails/wrapper/${GRAILS_VERSION}/grails-${GRAILS_VERSION}
 ENV PATH $PATH:${HOME_DIR}/.grails/wrapper/${GRAILS_VERSION}/grails-${GRAILS_VERSION}/bin/
+ENV PROPS_DIR ${INSTALL_DIR}/src/java
 
 WORKDIR ${HOME_DIR}
 
@@ -22,6 +23,9 @@ RUN \
 
 WORKDIR ${INSTALL_DIR} 
 
+# copy the sample props file to the expected Ice directory
+COPY ice/assets/sample.properties ${PROPS_DIR}/ice.properties
+
 # Ice setup
 RUN \
   mkdir /mnt/ice_processor && \
@@ -31,8 +35,12 @@ RUN \
   rm grails-app/i18n/messages.properties && \ 
   sed -i -e '1i#!/bin/bash\' grailsw
 
+ADD bootstrap.sh .
+
+RUN chmod +x bootstrap.sh
+
 EXPOSE 8080
 
-ENTRYPOINT ["/opt/ice/grailsw"]
+ENTRYPOINT ["./bootstrap.sh"]
 
-CMD []
+#CMD ["/root/docker/ice/configure_and_start.sh"]

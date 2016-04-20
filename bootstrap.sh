@@ -3,38 +3,11 @@
 ###                                          ###
 ###  Bootstrap Netflix ICE with System vars  ###
 ###                                          ###
-### ACCESS_KEY_ID                            ###
-### SECRET_KEY                               ###
-### ACCESS_TOKEN                             ###
 ### BILLING_BUCKET                           ###
 ### WORK_BUCKET                              ###
 ### COMPANY_NAME                             ###
 ###                                          ###
 ################################################
-
-# Check for AWS Creds Access Key parameter
-if [ -z ${ACCESS_KEY_ID+x} ]; then
-  echo "Please supply AWS Credentials Access Key!"
-  exit 1
-else
-  ACCESS_KEY_ID="${ACCESS_KEY_ID}"
-fi
-
-# Check for AWS Creds Secret Key parameter
-if [ -z ${SECRET_KEY+x} ]; then
-  echo "Please supply AWS Credentials Secret Key!"
-  exit 1
-else
-  SECRET_KEY="${SECRET_KEY}"
-fi
-
-# Check for AWS Creds Access Token parameter
-if [ -z ${ACCESS_TOKEN+x} ]; then
-  echo "Please supply AWS Credentials Access Token!"
-  exit 1
-else
-  ACCESS_TOKEN="${ACCESS_TOKEN}"
-fi
 
 # Check for S3 billing bucket parameter
 if [ -z ${BILLING_BUCKET+x} ]; then
@@ -60,14 +33,9 @@ else
 fi
 
 # Replace network interface name
-sed -i -e "s/%%MESOS_ZK%%/${ZK}/" \
-  -e "s/%%IP%%/${LOCAL_IP}/" \
-  -e "s/%%HTTP_PORT%%/${PORT}/" \
-  -e "s/%%EXTERNAL_DNS_SERVERS%%/${DNS_SERVERS}/" \
-  -e "s/%%HTTP_ON%%/${HTTP_ENABLED}/" \
-  -e "s/%%IP_SOURCES%%/${IP_SOURCES}/" \
-  -e "s/%%REFRESH%%/${REFRESH}/" \
-  -e "s/%%TIMEOUT%%/${TIMEOUT}/" \
+sed -i -e "s/%%COMPANY_NAME%%/${COMPANY_NAME}/" \
+  -e "s/%%WORK_BUCKET%%/${WORK_BUCKET}/" \
+  -e "s/%%BILLING_BUCKET%%/${BILLING_BUCKET}/" |
   ${PROPS_DIR}/ice.properties
 
 set -e
