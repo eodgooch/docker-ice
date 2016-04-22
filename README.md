@@ -22,64 +22,61 @@ More information and screenshots can be found on the [project's git page](https:
 
 ## What is this repository?
 
-This repository seeks to ease the installation and configuration of Ice. In addition to the application container, this repository configures a nginx proxy which also helps fix URI issues I had when accessing Ice directly. After following these directions you should be able to connect to your server's IP address or FQDN over port 80 and access the Ice application. Additionally, I've supplied an Upstart job script you can leverge to start your containers on boot.
+A fork of [jonbrouse/docker-ice](https://github.com/jonbrouse/docker-ice) adapted for Mesos & Marathon
+
+This repository seeks to ease the installation and configuration of Ice to be deployed on Mesos and Marathon. 
 
 # Getting Started
 
 ## Prerequisites 
 
  - Sign up for Amazon's programmatic billing access [here](http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/detailed-billing-reports.html) to receive detailed billing(hourly) reports. Verify you receive monthly billing file in the following format: <accountid>-aws-billing-detailed-line-items-<year>-<month>.csv.zip.
- - [Docker](https://docs.docker.com/installation/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
 
-## Docker Setup
-
- - Create the docker-compose file: `cp docker-compose-template.yml docker-compose.yml` 
- - Open docker-compose.yml and add the AWS Access Key ID and Secret Key that has access to the s3 billing bucket: `vi docker-compose.yml`
-
-	    ice:
-	      build: ice
-	      command: |
-	        -Djava.net.preferIPv4Stack=true
-	        -Djava.net.preferIPv4Addresses
-	        -Dice.s3AccessKeyId=<s3AccessKeyId>
-	        -Dice.s3SecretKey=<s3SecretKeyId>
+## Marathon Setup
        
- - Create the configuration file that will be mounted to the container: `cp ice/assets/sample.properties ice/assets/ice.properties`
- - Open ice.properties and configure a basic setup by updating the following: `vi ice/assets/ice.properties` 
-    
-	    # s3 bucket name where the billing files are
-	    ice.billing_s3bucketname=
-	    
-	    # Your company name
-	    ice.companyName=
-	    
-	    # s3 bucket name where Ice can store output files
-	    ice.work_s3bucketname=
-	    
-	    # Your AWS account number. You can also replace "production" with your own identifier 
-	    ice.account.production=
-
+ ```javascript
+ {
+     "id": "netflix-ice",
+     "env": {
+         "BILLING_BUCKET": "",
+         "WORK_BUCKET": "",
+         "COMPANY_NAME": "",
+         "ACCESS_KEY_ID": "",
+         "SECRET_KEY": "",
+         "ACCOUNT_NUM": ""
+     },
+     "container": {
+         "docker": {
+             "image": "eodgooch/docker-ice:marathon-v1",
+             "network": "BRIDGE",
+             "portMappings": [
+               { "containerPort": 8080, "hostPort": 0, "servicePort": 8001, "protocol": "tcp" }
+             ]
+         },
+         "type": "DOCKER"
+     },
+     "cpus": 1,
+     "mem": 1024,
+     "instances": 1,
+     "healthChecks": [
+     {
+       "protocol": "HTTP",
+       "portIndex": 0,
+       "path": "/",
+       "gracePeriodSeconds": 5,
+       "intervalSeconds": 20,
+       "maxConsecutiveFailures": 3
+     }
+   ]
+ }
+ ```
+ 
+ - Open `ice/assets/sample.properties` and set any additional parameters you require.
+ 
+ - Docker `ENTRYPOINT` is `bootstrap.sh` 
+ 
 More information on the configurations can be found on the [project's git page](https://github.com/Netflix/ice). 
-
-## Docker Compose
-
- - When you have completed the previous steps, issue `docker-compose up` This will start the containers in the forground so you can see if there are any errors.
- - Once everything looks good and you can access the UI issue `docker-compose up -d` to run the containers in the background.
 
 ## Base Docker Containers
 
-- The nginx container is pulled from the [official nginx Docker Hub repository](https://registry.hub.docker.com/_/nginx/).
-- The Ice container's base image is a [Java 7 container](https://registry.hub.docker.com/u/jonbrouse/java/) which is part of an automated build repository that I maintain.
-
-# Upstart Job
-
-I've included an Upstart job in the `init` directory of this repository. This will allow you to start the containers with `start ice` and stop them by running `stop ice`.  This will also start your containers at boot.
-
-1. Copy `init/ice.conf` to your host's `/etc/init/` directory
-2. Edit the the job `vi /etc/init/ice.conf` and change the path to the docker-compose file
-	
-	    pre-start exec /usr/local/bin/docker-compose -f /path/to/your/docker-compose.yml up -d
-
-		post-stop exec /usr/local/bin/docker-compose -f /path/to/your/docker-compose.yml stop
-
-4. Reload the job controller `initctl reload-configuration`
+- The Ice container's base image is a [Java 7 container](https://registry.hub.docker.com/u/jonbrouse/java/).
