@@ -71,9 +71,21 @@ This repository seeks to ease the installation and configuration of Ice to be de
  }
  ```
  
- - Open `ice/assets/ice.properties` and set any additional parameters you require.
+- Update Marathon JSON values for your needs:
+```
+    "BILLING_BUCKET": "",
+    "WORK_BUCKET": "",
+    "COMPANY_NAME": "",
+    "ACCESS_KEY_ID": "",
+    "SECRET_KEY": "",
+    "ACCOUNT_NUM": ""
+```
  
- - Docker `ENTRYPOINT` is `bootstrap.sh` 
+- Binds to Marathon `8001` service port. Update JSON configuration to your needs.
+ 
+- Open `ice/assets/ice.properties` and set any additional parameters you require.
+ 
+- Docker `ENTRYPOINT` is `bootstrap.sh` 
  
 More information on the configurations can be found on the [project's git page](https://github.com/Netflix/ice). 
 
