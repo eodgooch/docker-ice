@@ -47,7 +47,7 @@ This repository seeks to ease the installation and configuration of Ice to be de
      },
      "container": {
          "docker": {
-             "image": "eodgooch/docker-ice:marathon-v1",
+             "image": "eodgooch/docker-ice:marathon-1.0.0",
              "network": "BRIDGE",
              "portMappings": [
                { "containerPort": 8080, "hostPort": 0, "servicePort": 8001, "protocol": "tcp" }
