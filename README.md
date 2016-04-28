@@ -33,7 +33,7 @@ This repository seeks to ease the installation and configuration of Ice to be de
  - Sign up for Amazon's programmatic billing access [here](http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/detailed-billing-reports.html) to receive detailed billing(hourly) reports. Verify you receive monthly billing file in the following format: <accountid>-aws-billing-detailed-line-items-<year>-<month>.csv.zip.
 
 ## Marathon Setup
-       
+ 
  ```javascript
  {
      "id": "netflix-ice",
