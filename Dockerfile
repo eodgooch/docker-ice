@@ -23,9 +23,6 @@ RUN \
 
 WORKDIR ${INSTALL_DIR} 
 
-# copy the sample props file to the expected Ice directory
-COPY ice/assets/sample.properties ${PROPS_DIR}/ice.properties
-
 # Ice setup
 RUN \
   mkdir /mnt/ice_processor && \
@@ -35,6 +32,7 @@ RUN \
   rm grails-app/i18n/messages.properties && \ 
   sed -i -e '1i#!/bin/bash\' grailsw
 
+ADD /ice/assets/ice.properties $PROPS_DIR
 ADD bootstrap.sh .
 
 RUN chmod +x bootstrap.sh
@@ -42,5 +40,3 @@ RUN chmod +x bootstrap.sh
 EXPOSE 8080
 
 ENTRYPOINT ["./bootstrap.sh"]
-
-#CMD ["/root/docker/ice/configure_and_start.sh"]

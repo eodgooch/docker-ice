@@ -60,11 +60,9 @@ fi
 
 # Replace network interface name
 sed -i -e "s/%%COMPANY_NAME%%/${COMPANY_NAME}/" \
-  -e "s/%%ACCESS_KEY_ID%%/${ACCESS_KEY_ID}/" \
-  -e "s/%%SECRET_KEY%%/${SECRET_KEY}/" \
   -e "s/%%ACCOUNT_NUM%%/${ACCOUNT_NUM}/" \
   -e "s/%%WORK_BUCKET%%/${WORK_BUCKET}/" \
-  -e "s/%%BILLING_BUCKET%%/${BILLING_BUCKET}/" |
+  -e "s/%%BILLING_BUCKET%%/${BILLING_BUCKET}/" \
   ${PROPS_DIR}/ice.properties
 
 set -e
@@ -84,4 +82,4 @@ echo
 
 echo "Starting Netflix Ice:"
 echo "---------------------------------------------------------"
-exec /opt/ice/grailsw ${ICE_ARGUMENTS}
+exec /opt/ice/grailsw run-app -Dice.s3AccessKeyId=${ACCESS_KEY_ID} -Dice.s3SecretKey=${SECRET_KEY}
