@@ -71,7 +71,7 @@ This repository seeks to ease the installation and configuration of Ice to be de
  }
  ```
  
- - Open `ice/assets/sample.properties` and set any additional parameters you require.
+ - Open `ice/assets/ice.properties` and set any additional parameters you require.
  
  - Docker `ENTRYPOINT` is `bootstrap.sh` 
  
